@@ -1,0 +1,7 @@
+keystone-create
+
+This is a little tool to more seamlessly create users (and tenants) via the openstack keystone client api.
+The default keystone shell tool is more than capable, but copying and pasting id hashes can be a bit cumbersome. 
+
+Please note that you'll want to edit config.ini with your keystone admin credentials before using the utility. 
+
