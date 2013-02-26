@@ -21,11 +21,13 @@ config_parser.read('config.ini')
 username = config_parser.get('credentials', 'username')
 password = config_parser.get('credentials', 'password')
 tenant = config_parser.get('credentials', 'tenant')
-auth_url = config_parser.get('credentials', 'auth_url')
 ec2_url = config_parser.get('credentials', 'ec2_url')
+os_tenant_name = config_parser.get('credentials', 'os_tenant_name')
+os_username = config_parser.get('credentials', 'os_username')
+os_password = config_parser.get('credentials', 'os_password')
+os_auth_url = config_parser.get('credentials', 'os_auth_url')
 
-
-keystone = client.Client(username=username, password=password, tenant_name=tenant, auth_url=auth_url)
+keystone = client.Client(username=username, password=password, tenant_name=tenant, auth_url=os_auth_url)
 
 
 
@@ -98,6 +100,10 @@ keystone.ec2.create(user_id=new_user_id, tenant_id=new_tenant_id)
 ec2 = keystone.ec2.list(new_user_id)
 
 for i in ec2:
-	print "export EC2_URL=",ec2_url
-	print "export EC2_ACCESS_KEY=",i.access
-	print "export EC2_SECRET_KEY=",i.secret
+	print "export EC2_URL="+ec2_url
+	print "export EC2_ACCESS_KEY="+i.access
+	print "export EC2_SECRET_KEY="+i.secret
+	print "export OS_AUTH_URL="+os_auth_url
+	print "export OS_TENANT_NAME="+os_tenant_name
+	print "export OS_USERNAME="+os_username
+	print "export OS_PASSWORD="+os_password
