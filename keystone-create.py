@@ -12,6 +12,7 @@ argument_parser.add_argument('-u','--user', help='Desired username', required=Tr
 argument_parser.add_argument('-p','--password', help='Desired pasword', required=True)
 argument_parser.add_argument('-t','--tenant', help='Tenant for new user. If it does not exist, it will be created.', required=True)
 argument_parser.add_argument('-e','--email', help='Contact email for new user.', required=True)
+argument_parser.add_argument('-r','--role', help='Desired role for new user. If not specified, defaults to Member.', default="Member", required=False)
 args = vars(argument_parser.parse_args())
 
 config_parser = SafeConfigParser()
@@ -33,7 +34,8 @@ new_tenant=args['tenant']
 new_user=args['user']
 new_password=args['password']
 new_email=args['email']
-new_role="Member"
+#new_role="Member"
+new_role=args['role']
 
 r = {}
 
@@ -76,6 +78,17 @@ new_user_id = r[new_user]
 for role in keystone.roles.list():
 	r[role.name] = role.id
 
+
+#check for existing role name
+try:
+        r[new_role]
+except KeyError:
+        keystone.roles.create(new_role)
+
+# rebuild role map
+for role in keystone.roles.list():
+        r[role.name] = role.id
+
 new_role_id = r[new_role]
 
 keystone.roles.add_user_role(user=new_user_id, role=new_role_id, tenant=new_tenant_id)
@@ -85,6 +98,6 @@ keystone.ec2.create(user_id=new_user_id, tenant_id=new_tenant_id)
 ec2 = keystone.ec2.list(new_user_id)
 
 for i in ec2:
-	print "export EC2_URL =",ec2_url
-	print "export EC2_ACCESS_KEY =",i.access
-	print "export EC2_SECRET_KEY =",i.secret
+	print "export EC2_URL=",ec2_url
+	print "export EC2_ACCESS_KEY=",i.access
+	print "export EC2_SECRET_KEY=",i.secret
