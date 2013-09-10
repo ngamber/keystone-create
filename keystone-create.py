@@ -49,7 +49,7 @@ roles_map = {}
 
 # build tenant id-name mapping
 for tenant in keystone.tenants.list():
-	tenant_map[tenant.name] = tenant.id
+    tenant_map[tenant.name] = tenant.id
 
 #check for existing tenant name
 #replaced try-except with if statement so as not to rebuild tenant-id map
@@ -58,7 +58,7 @@ if new_tenant not in tenant_map:
     keystone.tenants.create(new_tenant)	
     # rebuild tenant map
     for tenant in keystone.tenants.list():
-	    tenant_map[tenant.name] = tenant.id
+        tenant_map[tenant.name] = tenant.id
 	    
 new_tenant_id = tenant_map[new_tenant]
 
@@ -69,29 +69,29 @@ new_tenant_id = tenant_map[new_tenant]
 logging.disable(50)
 
 try:
-	keystone.users.create(name=new_user,
-	                      password=new_password,
-	                      email=new_email,
-	                      tenant_id=new_tenant_id)
+    keystone.users.create(name=new_user,
+                          password=new_password,
+                          email=new_email,
+                          tenant_id=new_tenant_id)
 except	ClientException:
-	print "That user already exists!"
-	sys.exit(1)
+    print "That user already exists!"
+    sys.exit(1)
 
 #rebuild user mapping
 for user in keystone.users.list():
-	user_map[user.name] = user.id
+    user_map[user.name] = user.id
 
 new_user_id = user_map[new_user]
 
 #build role id-name mapping
 for role in keystone.roles.list():
-	roles_map[role.name] = role.id
+    roles_map[role.name] = role.id
 
 #replaced with if statement for same reason as above
 if new_role not in roles_map:
-	keystone.roles.create(new_role)
-	for role in keystone.roles.list():
-		roles_map[role.name] = role.id
+    keystone.roles.create(new_role)
+    for role in keystone.roles.list():
+        roles_map[role.name] = role.id
 
 new_role_id = roles_map[new_role]
 
@@ -103,13 +103,13 @@ keystone.ec2.create(user_id=new_user_id, tenant_id=new_tenant_id)
 
 ec2 = keystone.ec2.list(new_user_id)
 for i in ec2:
-	print "export EC2_URL="+ec2_url
-	print "export EC2_ACCESS_KEY="+i.access
-	print "export EC2_SECRET_KEY="+i.secret
-	print "export OS_AUTH_URL="+os_auth_url
-	print "export OS_TENANT_NAME="+new_tenant
-	print "export OS_USERNAME="+new_user
-	print "export OS_PASSWORD="+new_password
+    print "export EC2_URL="+ec2_url
+    print "export EC2_ACCESS_KEY="+i.access
+    print "export EC2_SECRET_KEY="+i.secret
+    print "export OS_AUTH_URL="+os_auth_url
+    print "export OS_TENANT_NAME="+new_tenant
+    print "export OS_USERNAME="+new_user
+    print "export OS_PASSWORD="+new_password
 
 #quota settings
 nova.quotas.update(new_tenant_id, ram = 35000, floating_ips = 20, cores = 20)
@@ -117,6 +117,6 @@ tenant_quota = nova.quotas.get(new_tenant_id)
 quota_dict = vars(tenant_quota)
 
 for item in quota_dict:
-	if (type(quota_dict[item]) == int) & (quota_dict[item] != -1):
-		print item, quota_dict[item]
+    if (type(quota_dict[item]) == int) & (quota_dict[item] != -1):
+        print item, quota_dict[item]
 
